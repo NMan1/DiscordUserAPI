@@ -40,3 +40,8 @@ What you can do:
 	- Gets list of all friends with nitro
 17. `search(terms)`
 	- Searchs all user channel messages filtered by list of terms 
+
+
+Since this was written with OOP in mind, you can have multiple instances of accounts by just creating multiple Api() objects.
+You can save accounts by dumping their json into an `accounts.json` file, as shown at [line 25](https://github.com/NMan1/DiscordAPI/blob/3ccbddd4dacfab0020fad9a253d488d392f13694/main.py#L25)
+As well as if you have a lot of tokens, create a `token.txt` file and they'll all be loaded and then dumped to `accounts.json`
