@@ -245,8 +245,8 @@ class Api:
             time.sleep(1)
         print(f"{self.username} | Sent {total} dm's")
 
-    def set_typing(self):
-        url = f"https://discord.com/api/v8/channels/765669565874176010/typing"
+    def set_typing(self, channel_id):
+        url = f"https://discord.com/api/v8/channels/{channel_id}/typing"
         headers = {"authorization": self.token,
                    "accept": "/",
                    "authority": "discordapp.com",
