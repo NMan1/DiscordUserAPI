@@ -2,8 +2,7 @@
 
 **About**
 
-DiscordUserAPI allows you to automate a lot of discord actions needing only a user token. 
-
+DiscordUserAPI allows you to automate a lot of discord actions needing only a user token. As well as manage bulk discord accounts/tokens.
 What you can do:
 
 1. `validate()`
