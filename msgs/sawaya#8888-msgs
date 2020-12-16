@@ -1,0 +1,118 @@
+By sawaya#8888 | 764677444376461324) Found term.
+User name:manga_car
+Password: nina1113
+
+By Bili#5434 | 764677444376461324) Found term.
+u can change the password later
+
+By Bili#5434 | 764677444376461324) Found term.
+i will need ur auth.gg account tho
+
+By sawaya#8888 | 764677444376461324) Found term.
+No one has cracked the latest version
+
+By sawaya#8888 | 764677444376461324) Found term.
+Like the video I just sent
+Can the rotor be cracked?
+
+By sawaya#8888 | 764677444376461324) Found term.
+I have a little question is there a loader cracking using cheat engine like this
+
+By sawaya#8888 | 764677525099249686) Found term.
+This is my new account
+
+By JAGER38#4501 | 764678622979424286) Found term.
+finally get pass easy anti cheat
+
+By sawaya#8888 | 764678622979424286) Found term.
+I bypassed Battleye
+
+By JAGER38#4501 | 764678622979424286) Found term.
+wont even get pass easyanti cheat
+
+By sawaya#8888 | 769893186880929842) Found term.
+```php
+public function generate_license_keys($Product, $time, $seller)
+    {
+        if ($mysqli == null)
+            $mysqli = mysqli_connect(HOST, USER, PASS, DB);
+        
+        $license_key = self::generate_random_string(60);
+        $Product = mysqli_real_escape_string($mysqli, $Product);
+        $time = mysqli_real_escape_string($mysqli, $time);
+        $seller = mysqli_real_escape_string($mysqli, $seller); 
+        
+        $query = mysqli_query($mysqli, "INSERT INTO license_keys(license_key, Product, time, seller) VALUES('$license_key', '$Product', '$time', '$seller')");
+        
+        if (mysqli_error($mysqli))
+            die(mysqli_error($mysqli));
+            
+        return $license_key;
+    }
+```
+
+By sawaya#8888 | 769893186880929842) Found term.
+> 例えば：
+> ```php
+> <?php
+> $dbhost = 'localhost'; // ホスト名
+> $dbuser = 'detabesuyuzamei'; // ユーザ名
+> $dbpass = 'pasuwado'; // パスワード
+> $dbname = 'detabesumei'; // データベース名
+> ```
+> 
+> ```php
+> <?php
+> require('config.php');
+> $mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+> 
+> /* 接続状況をチェックします */
+> if ($mysqli->connect_errno) {
+>     printf("Connect failed: %s\n", $mysqli->connect_error);
+>     exit();
+> }
+> 
+> /* Select クエリを実行します。メールアドレスを見せて */
+> if ($result = $mysqli->query("SELECT email FROM user where id = 1")) {
+>     printf("メールアドレス：%s", $result->email);
+> 
+>     /* 結果セットを開放します */
+>     $result->close();
+> }
+> 
+> $mysqli->close();
+> ```
+データベースで何のテーブルの作成が必要なのかはわかりますかね?
+
+By テクニカル諏訪子#3116 | 769893186880929842) Found term.
+例えば：
+```php
+<?php
+$dbhost = 'localhost'; // ホスト名
+$dbuser = 'detabesuyuzamei'; // ユーザ名
+$dbpass = 'pasuwado'; // パスワード
+$dbname = 'detabesumei'; // データベース名
+```
+
+```php
+<?php
+require('config.php');
+$mysqli = new mysqli($dbhost, $dbuser, $dbpass, $dbname);
+
+/* 接続状況をチェックします */
+if ($mysqli->connect_errno) {
+    printf("Connect failed: %s\n", $mysqli->connect_error);
+    exit();
+}
+
+/* Select クエリを実行します。メールアドレスを見せて */
+if ($result = $mysqli->query("SELECT email FROM user where id = 1")) {
+    printf("メールアドレス：%s", $result->email);
+
+    /* 結果セットを開放します */
+    $result->close();
+}
+
+$mysqli->close();
+```
+
