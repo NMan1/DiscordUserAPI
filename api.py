@@ -330,8 +330,7 @@ class Api:
                 pass
         return friends
 
-    def search(self):
-        terms = ['password', 'pass', 'login', 'paypal', 'email', 'gift', 'nitro', 'account', "@", "gmail"]
+    def search(self, terms):
         print(f"\nSearching messages in {self.username} with terms: {terms}")
         self.get_messages(terms)
 
